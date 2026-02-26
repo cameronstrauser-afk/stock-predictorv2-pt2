@@ -43,8 +43,18 @@ if st.button("Run AI Prediction"):
     last_price = df["Close"].iloc[-1]
     future_price = preds[-1]
 
-    signal = "BUY" if future_price > last_price else "SELL"
-    confidence = round(abs(future_price-last_price)/last_price*100,2)
+price_change_pct = (future_price - last_price) / last_price * 100
+confidence = round(abs(price_change_pct), 2)
+
+# Dynamic threshold (you can adjust this)
+threshold = 1.5  # 1.5% neutral zone
+
+if price_change_pct > threshold:
+    signal = "BUY"
+elif price_change_pct < -threshold:
+    signal = "SELL"
+else:
+    signal = "HOLD"
 
     st.subheader(f"Prediction for {ticker}")
     st.metric("Current Price", round(last_price,2))
